@@ -1,0 +1,33 @@
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+<script src="/socket.io/socket.io.js"></script>
+
+<script>
+    var socket = io.connect('/');
+    var startTime;
+    
+    socket.on('random', function(data){
+        var endTime = new Date().getTime();
+        var time = endTime - startTime;
+        $('#log').prepend('cas: ' + time + ', nahodne cislo: ' + data.random + '<br/>');
+    });
+    
+    socket.on('disconnect', function(){
+        document.write('Server se odpojil. Restartujde server a pote refreshujte stranku prohlizece.');
+    });
+  
+    $(document).ready(function(){
+        $('#testButton').click(function(){
+            startTime = new Date().getTime();
+            socket.emit('getRandom');
+        });
+    });
+</script>
+
+<html>
+    <body>
+        <p>Po stisknuti tlacitka test bude na server odeslan pozadavek na vygenerovani nahodneho cisla.</p>
+        <p>Bude take zmeren cas, za ktery prisla odpoved.</p>
+        <input type="button" value="test" id="testButton"/>
+        <p id="log"></p>
+    </body>
+</html>
